@@ -51,7 +51,10 @@ public class ReconciliationService {
     }
 
     ReconciliationRun run = new ReconciliationRun();
-    run.setStartedAt(OffsetDateTime.now());
+    OffsetDateTime startedAt = OffsetDateTime.now();
+    run.setStartedAt(startedAt);
+    // Keep first insert valid for non-null DB constraint; updated at end of run.
+    run.setCompletedAt(startedAt);
     run.setTotalGateway(gatewayTransactions.size());
     run.setTotalLedger(ledgerEntries.size());
     run = runRepository.save(run);
