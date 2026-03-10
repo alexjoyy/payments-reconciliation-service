@@ -1,0 +1,15 @@
+services:
+  reconciliation-db:
+    image: postgres:16
+    container_name: reconciliation-db
+    environment:
+      POSTGRES_USER: reconciliation_user
+      POSTGRES_PASSWORD: reconciliation_pass
+      POSTGRES_DB: reconciliation_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - reconciliation-db-data:/var/lib/postgresql/data
+
+volumes:
+  reconciliation-db-data:

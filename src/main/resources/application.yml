@@ -1,0 +1,25 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5436/reconciliation_db
+    username: reconciliation_user
+    password: reconciliation_pass
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+reconciliation:
+  schedule:
+    cron: "0 0 * * * *"
