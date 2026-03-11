@@ -2,6 +2,23 @@
 
 Backend service that reconciles payment gateway transactions against internal ledger entries, stores reconciliation runs, and exposes unmatched reports (JSON + CSV).
 
+## Outcome
+
+- Built reconciliation workflow that compares gateway and ledger records by transaction ID and amount.
+- Added manual run endpoint plus hourly scheduled run support.
+- Exposed unmatched exceptions as both API JSON and downloadable CSV.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    G["Gateway Feed"] --> API["reconciliation-api"]
+    L["Ledger Feed"] --> API
+    API --> R["Reconciliation Engine"]
+    R --> DB[("PostgreSQL")]
+    API --> REP["Unmatched JSON/CSV Reports"]
+```
+
 ## Stack
 
 - Java 21
@@ -67,7 +84,33 @@ curl http://localhost:8083/api/reconciliation/reports/unmatched
 curl -L -o unmatched-report.csv http://localhost:8083/api/reconciliation/reports/unmatched.csv
 ```
 
+### Sample response (`POST /api/reconciliation/run`)
+
+```json
+{
+  "timestamp": "2026-03-11T01:21:40+05:30",
+  "status": 200,
+  "message": "Reconciliation completed",
+  "path": "/api/reconciliation/run",
+  "data": {
+    "runId": 6,
+    "totalGateway": 1,
+    "totalLedger": 1,
+    "matchedCount": 0,
+    "unmatchedCount": 1
+  }
+}
+```
+
 ## Notes
 
 - Scheduler runs every hour by default (`reconciliation.schedule.cron`).
 - Seed data is included to generate matched and unmatched cases quickly.
+
+## Deploy (Render)
+
+This repo includes `render.yaml` + `Dockerfile`.
+
+1. Connect repository to Render Blueprint deploy.
+2. Provision API service and Postgres database from `render.yaml`.
+3. Verify health endpoint `/actuator/health` after deploy.
