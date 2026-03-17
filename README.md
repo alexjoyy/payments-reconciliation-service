@@ -29,7 +29,7 @@ flowchart LR
 ## Run
 
 ```bash
-cd "/Users/alexjoy/Documents/codex projects/payments-reconciliation-service"
+cd payments-reconciliation-service
 docker compose up -d
 mvn spring-boot:run
 ```
